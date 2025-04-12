@@ -1,5 +1,7 @@
 package su.nightexpress.coinsengine;
 
+import com.xyrisdev.library.scheduler.XScheduler;
+import com.xyrisdev.library.scheduler.scheduling.schedulers.TaskScheduler;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 import su.nightexpress.coinsengine.command.impl.BasicCommands;
@@ -25,11 +27,18 @@ public class CoinsEnginePlugin extends NightPlugin implements ImprovedCommands {
     private MigrationManager migrationManager;
     private DataHandler      dataHandler;
     private UserManager      userManager;
+    // Folia support - begin
+    private static TaskScheduler scheduler;
+    // Folia support - end
 
     private CoinsLogger coinsLogger;
 
     @Override
     public void enable() {
+        // Folia support - begin
+        scheduler = XScheduler.of(this);
+        // Folia support - end
+
         CoinsEngineAPI.load(this);
 
         this.coinsLogger = new CoinsLogger(this);
@@ -52,7 +61,8 @@ public class CoinsEnginePlugin extends NightPlugin implements ImprovedCommands {
         }
 
         if (Plugins.isInstalled(HookId.DELUXE_COINFLIP)) {
-            this.runTask(task -> DeluxeCoinflipHook.setup(this));
+//            this.runTask(task -> DeluxeCoinflipHook.setup(this));
+            scheduler().runTask(() -> DeluxeCoinflipHook.setup(this));
         }
     }
 
@@ -82,6 +92,12 @@ public class CoinsEnginePlugin extends NightPlugin implements ImprovedCommands {
             .setLangClass(Lang.class)
             .setPermissionsClass(Perms.class);
     }
+
+    // Folia support - begin
+    public static TaskScheduler scheduler() {
+        return scheduler;
+    }
+    // Folia support - end
 
     @NotNull
     public CoinsLogger getCoinsLogger() {

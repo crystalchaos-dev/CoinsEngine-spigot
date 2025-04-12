@@ -46,7 +46,8 @@ public class CurrencyManager extends AbstractManager<CoinsEnginePlugin> {
             }
         }
 
-        this.addAsyncTask(this::updateBalances, Config.TOP_UPDATE_INTERVAL.get());
+//        this.addAsyncTask(this::updateBalances, Config.TOP_UPDATE_INTERVAL.get());
+        CoinsEnginePlugin.scheduler().runTaskTimerAsynchronously(this::updateBalances, 0L, Config.TOP_UPDATE_INTERVAL.get());
     }
 
     @Override
